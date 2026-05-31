@@ -69,6 +69,6 @@ jobs:
 
           sudo docker network create mynet || true
 
-          sudo docker run -d -p 5000:5000 --name backend --network mynet backend-app:latest
+          sudo docker run -d -p 5000:5000 --name backend --network mynet 160900807677.dkr.ecr.us-east-1.amazonaws.com/backend-app:latest
 
-          sudo docker run -d -p 80:80 --name frontend --network mynet frontend-repo:latest
+          sudo docker run -d -p 80:80 --name frontend --network mynet 160900807677.dkr.ecr.us-east-1.amazonaws.com/frontend-app:latest
