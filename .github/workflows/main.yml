@@ -69,7 +69,7 @@ jobs:
           
           sudo docker network rm mynet || true
 
-          docker rm -f backend frontend mysql || true
+          sudo docker rm -f backend frontend mysql || true
 
           sudo docker network create mynet
           
