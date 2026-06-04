@@ -68,7 +68,7 @@ jobs:
         working-directory: terraform
         run: terraform apply -auto-approve
         
-      - name: Force ECS Deployment
+      - name: ECS Deployment
         run: |
          aws ecs update-service \
          --cluster ${{ env.CLUSTER }} \
