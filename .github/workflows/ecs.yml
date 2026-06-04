@@ -58,15 +58,14 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform
-        run: terraform init
+        run: |
+         terraform init 
+         terraform import module.ecs.aws_iam_role.ecs_task_execution_role ecsTaskExecutionRole || true
+         terraform import module.cw.aws_cloudwatch_log_group.ecs_logs "/ecs/3Tapp" || true
 
       - name: Terraform Validate
         working-directory: terraform
         run: terraform validate
-
-      - name: Terraform Destroy
-        working-directory: terraform
-        run: terraform destroy -auto-approve
 
       - name: Terraform Apply
         working-directory: terraform
