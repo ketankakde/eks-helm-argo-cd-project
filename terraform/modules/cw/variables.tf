@@ -3,7 +3,7 @@ variable "name" {
 }
 
 variable "endpoint" {
- default = "ketankakde93gmail.com"
+ default = "ketankakde93@gmail.com"
 }
 
 variable "alarm_name" {
