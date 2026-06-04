@@ -58,10 +58,7 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform
-        run: |
-         terraform init 
-         terraform import module.ecs.aws_iam_role.ecs_task_execution_role ecsTaskExecutionRole || true
-         terraform import module.cw.aws_cloudwatch_log_group.ecs_logs "/ecs/3Tapp" || true
+        run: terraform init
 
       - name: Terraform Validate
         working-directory: terraform
