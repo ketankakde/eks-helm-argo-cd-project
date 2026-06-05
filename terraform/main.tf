@@ -8,6 +8,10 @@ module "sg" {
   vpc_id = module.vpc.vpc_id
 }
 
+module "ecr" {
+  source = "./modules/ecr"
+}
+
 module "ecs" {
   source = "./modules/ecs"
 
