@@ -14,6 +14,10 @@ module "ec2" {
   instance_profile_name = module.iam.instance_profile_name
 }
 
+module "ecr" {
+  source = "./modules/ecr"
+}
+
 module "rds" {
   source = "./modules/rds"
 
