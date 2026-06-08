@@ -102,6 +102,14 @@ jobs:
       - deploy-infra
 
     steps:
+      - name: Debug Outputs
+        run: |
+         echo "EC2_IP=${{ needs.deploy-infra.outputs.ec2_ip }}"
+         echo "RDS_ENDPOINT=${{ needs.deploy-infra.outputs.rds_endpoint }}"
+
+
+
+    
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
