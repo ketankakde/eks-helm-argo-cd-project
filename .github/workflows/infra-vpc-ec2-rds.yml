@@ -1,7 +1,16 @@
 name: Infrastructure
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Choose Terraform action"
+        required: true
+        default: "create"
+        type: choice
+        options:
+          - create
+          - destroy
 
 permissions:
   id-token: write
@@ -12,8 +21,7 @@ env:
   TF_WORKING_DIR: terraform-vpc-ec2-rds
 
 jobs:
-  deploy-infra:
-    name: Terraform Apply
+  terraform:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,9 +42,16 @@ jobs:
         run: terraform init
 
       - name: Terraform Validate
+        if: github.event.inputs.action == 'create'
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
 
       - name: Terraform Apply
+        if: github.event.inputs.action == 'create'
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform apply -auto-approve
+
+      - name: Terraform Destroy
+        if: github.event.inputs.action == 'destroy'
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform destroy -auto-approve
