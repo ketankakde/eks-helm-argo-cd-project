@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default = "project-cluster"
+  default = "git-ops-cluster"
 }
 
 variable "cluster_role_arn" {
