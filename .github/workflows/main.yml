@@ -1,0 +1,79 @@
+name: EKS Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+      CLUSTER_NAME: git-ops-cluster
+
+    steps:
+
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+       role-to-assume: arn:aws:iam::160900807677:role/github-actions-role
+       aws-region: us-east-1
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      working-directory: terraform
+      run: terraform init
+
+    - name: Terraform Validate
+      working-directory: terraform
+      run: terraform validate
+
+    - name: Terraform Apply
+      working-directory: terraform
+      run: terraform apply -auto-approve
+
+    - name: Configure kubectl
+      run: |
+        aws eks update-kubeconfig \
+        --region $AWS_REGION \
+        --name $CLUSTER_NAME
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Push Images
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./frontend
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest ./backend
+
+        docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+
+    - name: Deploy MySQL
+      run: |
+        helm upgrade --install mysql ./helm/mysql
+
+    - name: Deploy Backend
+      run: |
+        helm upgrade --install backend ./helm/backend
+
+    - name: Deploy Frontend
+      run: |
+        helm upgrade --install frontend ./helm/frontend
+
+    - name: Verify Pods
+      run: |
+        kubectl get pods
+        kubectl get svc
